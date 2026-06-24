@@ -1,11 +1,474 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>我的网站</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>凝香寻古 · 中式香文化</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 </head>
 <body>
-    <h1>Hello, 我的第一个网站!</h1>
-    <p>我通过 GitHub Pages 部署成功了！</p>
+    <!-- ==========================================================
+    #app — 应用根容器
+    ========================================================== -->
+    <div id="app">
+
+        <!-- ===== 全局信息弹窗（场景拖拽使用） ===== -->
+        <div id="infoBox"></div>
+
+        <!-- ==========================================================
+        【页面区域】
+        ========================================================== -->
+
+        <!-- 1. 引入页 -->
+        <div id="page-intro" class="page active" data-page="intro">
+            <div class="intro-bg"></div>
+            <div class="intro-content">
+                <h1>凝香寻古</h1>
+                <div class="sub">— 溯香千年，藏古今和合清韵 —</div>
+                <p>
+                    一缕青烟，穿越千年。<br />
+                    从祭祀礼器到文人雅趣，从天然草木到匠心炮制，<br />
+                    香，承载着东方美学的灵韵与哲思。
+                </p>
+                <button class="btn-enter" id="btnEnterIntro">进入了解</button>
+            </div>
+        </div>
+
+        <!-- ===== 第一页（香囊场景） ===== -->
+        <div id="page-scene1" class="page" data-page="scene1">
+            <div class="wrap">
+                <div class="layer bg"><img src="bg/background.jpg" alt="背景"></div>
+                <div class="layer mid"><img src="bg/midground.png" alt="中景"></div>
+                <div class="layer front"><img src="bg/foreground.png" alt="前景"></div>
+                <div class="smoke smoke-1"></div>
+                <div class="smoke smoke-2"></div>
+                <div class="particles-container"></div>
+
+                <!-- 香囊（仅第一页） -->
+                <div id="sachet" class="draggable-item" draggable="true"
+                     data-info="《礼记・内则》：原文：男女未冠笄者，鸡初鸣，咸盥漱，栉縰，拂髦，总角，衿缨，皆佩容臭。">
+                </div>
+                <!-- 香囊投放区 -->
+                <div id="person" class="drop-zone"></div>
+            </div>
+            <button class="btn-scene-next" data-next="scene2">下一场景 →</button>
+        </div>
+
+        <!-- ===== 第二页（火柴场景） ===== -->
+        <div id="page-scene2" class="page" data-page="scene2">
+            <div class="wrap">
+                <div class="layer bg"><img src="bg/background1.png" alt="背景"></div>
+                <div class="layer mid"><img src="bg/midground1.png" alt="中景"></div>
+                <div class="layer front"><img src="bg/foreground.png" alt="前景"></div>
+                <div class="smoke smoke-1"></div>
+                <div class="smoke smoke-2"></div>
+                <div class="particles-container"></div>
+
+                <!-- 火柴（仅第二页） -->
+                <div id="huochai" class="draggable-item" draggable="true" data-info="北宋・洪刍《香谱》原文：安息香，辛香辟疫，主鬼疰瘟毒；边境疫荒，朝廷常随赈灾药材颁下，或合香焚烧、或入丸内服。景德三年吐蕃大疫，大宋赐药七十六味，安息香为首列辟瘟之药。"></div>
+                <!-- 火柴投放目标 -->
+                <div id="matchTarget" class="drop-zone">
+                    <span class="label">投放火柴</span>
+                </div>
+            </div>
+            <button class="btn-scene-next" data-next="scene3">下一场景 →</button>
+        </div>
+
+        <!-- ===== 第三页（沉香场景） ===== -->
+        <div id="page-scene3" class="page" data-page="scene3">
+            <div class="wrap">
+                <div class="layer bg"><img src="bg/background2.jpg" alt="背景"></div>
+                <div class="layer mid"><img src="bg/midground2.png" alt="中景"></div>
+                <div class="layer front"><img src="bg/foreground.png" alt="前景"></div>
+                <div class="smoke smoke-1"></div>
+                <div class="smoke smoke-2"></div>
+                <div class="particles-container"></div>
+
+                <!-- 沉香（仅第三页） -->
+                <div id="chenxiang" class="draggable-item" draggable="true" data-info="北宋・洪刍《香谱》原文：沉香，入水则沉，上古郊祀燔柴只用萧蒿，汉魏以降，天子郊天、太庙祭祖，必用沉檀爇于燎坛，烟气上达苍穹，为皇家正祀御香。"></div>
+                <!-- 沉香投放目标（香炉） -->
+                <div id="chenxiangTarget" class="drop-zone">
+                    <span class="label">投放沉香</span>
+                </div>
+            </div>
+            <button class="btn-scene-next" data-next="home">进入首页 →</button>
+        </div>
+
+        <!-- ===== 首页 ===== -->
+<div id="page-home" class="page main-page" data-page="home">
+    <div class="page-content home-page-content">
+        <div class="home-scene">
+            <div class="scene-container">
+                <div class="home-incense">
+                    <img src="images/xianglu2.png" class="incense-img" alt="香炉" />
+                    <div class="incense-smoke">
+                        <span class="smoke-particle"></span>
+                        <span class="smoke-particle"></span>
+                        <span class="smoke-particle"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-overlay">
+            <h1 class="home-title">
+                <span class="char-niang">凝</span>
+                <span class="char-xiang">香</span>
+                <span class="char-xun">寻</span>
+                <span class="char-gu">古</span>
+            </h1>
+        </div>
+       
+    </div>
+</div>
+
+        <!-- ===== 历史追溯 — 邮票轮播 ===== -->
+        <div id="page-history" class="page main-page" data-page="history">
+            <div class="page-content" style="padding: 6px 0 50px; max-width: 100%;">
+                <div class="history-header">
+                    <h1>历史追溯</h1>
+                    <div class="sub">— 香韵千年 · 十枚时光邮票 —</div>
+                </div>
+                <div class="carousel-wrapper" id="carouselWrapper">
+                    <div class="carousel-track" id="carouselTrack"></div>
+                </div>
+            </div>
+            <div class="modal-overlay" id="modalOverlay">
+                <div class="modal-container">
+                    <div class="modal-bg" id="modalBg"></div>
+                    <div class="modal-mask"></div>
+                    <div class="modal-content" id="modalContent">
+                        <div class="modal-stage" id="modalStage">第一阶段</div>
+                        <h2 class="modal-title" id="modalTitle">新石器时期（萌芽）</h2>
+                        <div class="modal-info">
+                            <div class="modal-row">
+                                <span class="modal-label">年代：</span>
+                                <span class="modal-value" id="modalPeriod">约公元前 6000 年 — 前 2000 年</span>
+                            </div>
+                            <div class="modal-row">
+                                <span class="modal-label">使用人群/核心人群：</span>
+                                <span class="modal-value" id="modalPeople">氏族首领、巫师</span>
+                            </div>
+                            <div class="modal-row">
+                                <span class="modal-label">核心香材：</span>
+                                <span class="modal-value" id="modalHerbs">艾草、樟树、花椒等本土芳香草木</span>
+                            </div>
+                            <div class="modal-row">
+                                <span class="modal-label">核心用途/使用场景：</span>
+                                <span class="modal-value" id="modalUsage">燎祭（烧草木升烟沟通天地神灵）、驱虫、净化居所除秽</span>
+                            </div>
+                        </div>
+                        <button class="modal-close" id="modalClose">✕ 关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 天然香料 -->
+<div id="page-spices" class="page main-page" data-page="spices">
+    <div class="page-content spices-page-content">
+        <h1 class="page-title">天然香料</h1>
+        <div class="page-subtitle">— 天地灵韵 · 香材百科 —</div>
+        
+        <!-- 切换按钮 -->
+        <div class="spices-tabs">
+            <button class="spices-tab active" data-tab="herb">🌿 香材介绍</button>
+            <button class="spices-tab" data-tab="recipe">📜 古代名香</button>
+        </div>
+
+        <!-- 内容展示面板 -->
+<div class="spices-panel" id="spicesPanel">
+    <div class="panel-content" id="panelContent">
+        <!-- 由 JS 动态渲染 -->
+    </div>
+</div>
+
+<!-- ★★★ 香材使用频率柱状图（古代名香 Tab 显示） ★★★ -->
+<div class="herb-chart-container" id="herbChartContainer" style="display:none;">
+    <div class="chart-title">香材使用频率统计</div>
+    <div class="chart-bars" id="chartBars"></div>
+</div>
+
+        <!-- 一键展开按钮 -->
+        <button class="btn-expand" id="btnExpand">
+            <span class="btn-expand-icon">▼</span>
+            <span class="btn-expand-text">展开全部</span>
+        </button>
+
+        <!-- 横向滚动轴 -->
+        <div class="spices-scroll-wrapper" id="spicesScrollWrapper">
+            <div class="spices-scroll-track" id="spicesScrollTrack">
+                <!-- 由 JS 动态渲染 -->
+            </div>
+        </div>
+    </div>
+</div>
+
+     <!-- 6. 制香工序 -->
+<div id="page-process" class="page main-page" data-page="process">
+    <div class="page-content process-page-content">
+        <!-- 固定标题 -->
+        <div class="process-header">
+            <h1 class="page-title">制香工序</h1>
+            <div class="page-subtitle">— 匠心凝练 · 七步成香 —</div>
+            <div class="process-scroll-hint">↓ 滚轮滑动探索制香工序 ↓</div>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="process-progress" id="processProgress"></div>
+
+        <!-- 步骤容器 -->
+        <div class="process-scroll-container" id="processScrollContainer">
+            <!-- 步骤由 JS 动态生成，但我们可以通过 JS 修改模板 -->
+        </div>
+    </div>
+</div>
+
+                <!-- 7. 非遗传承 (二级页面版) -->
+        <div id="page-heritage" class="page main-page" data-page="heritage">
+            <div class="page-content heritage-page-content">
+                <div class="heritage-header">
+                    <h1 class="page-title">非遗传承</h1>
+                    <div class="page-subtitle">— 活态流变 · 千年香火 —</div>
+                </div>
+                <div class="heritage-cards">
+                    <div class="heritage-card" data-target="inheritor">
+                        <div class="card-icon">👤</div>
+                        <h3 class="card-title">传承人</h3>
+                        <p class="card-desc">薪火相传 · 匠心守护</p>
+                        <span class="card-arrow">→</span>
+                    </div>
+                    <div class="heritage-card" data-target="project">
+                        <div class="card-icon">📜</div>
+                        <h3 class="card-title">相关项目</h3>
+                        <p class="card-desc">非遗名录 · 香脉延续</p>
+                        <span class="card-arrow">→</span>
+                    </div>
+                    <div class="heritage-card" data-target="signature">
+                        <div class="card-icon">✍️</div>
+                        <h3 class="card-title">传承签名</h3>
+                        <p class="card-desc">留名寄意 · 共续香缘</p>
+                        <span class="card-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 非遗二级页面：传承人 ===== -->
+<div id="page-inheritor" class="page sub-page heritage-sub-page">
+    <button class="back-btn" data-back="heritage">← 返回</button>
+    <div class="sub-page-title">
+        传承人
+        <span class="sub">— 薪火相传 · 匠心守护 —</span>
+    </div>
+    <!-- ★★★ 添加横向滚动容器 ★★★ -->
+    <div class="inheritor-scroll-wrapper">
+        <div class="inheritor-slider" id="inheritorSlider">
+            <!-- 由 JS 动态生成 -->
+        </div>
+    </div>
+    <div class="inheritor-detail" id="inheritorDetail">
+        <div class="detail-name" id="detailName">李时亮</div>
+        <div class="detail-title" id="detailTitle">国家级非遗传承人</div>
+        <div class="detail-desc" id="detailDesc">传统香制作技艺（药香制作技艺）代表性传承人。自幼随家族学习药香制作，精通香药炮制与合香配伍，致力于传统药香的复原与创新，让千年药香在当代焕发新生。</div>
+    </div>
+</div>
+
+      <!-- ===== 非遗二级页面：相关项目 ===== -->
+<div id="page-project" class="page sub-page heritage-sub-page">
+    <button class="back-btn" data-back="heritage">← 返回</button>
+    <div class="sub-page-title">
+        相关项目
+        <span class="sub">— 非遗名录 · 香脉延续 —</span>
+    </div>
+    
+    <!-- ★★★ 级别标签 ★★★ -->
+    <div class="project-level-tabs">
+        <button class="level-tab active" data-level="all">📋 全部</button>
+        <button class="level-tab" data-level="国家级">🏅 国家级</button>
+        <button class="level-tab" data-level="省级">⭐ 省级</button>
+        <button class="level-tab" data-level="市级">📌 市级</button>
+    </div>
+    
+    <!-- ★★★ 饼图（在全部Tab下方显示） ★★★ -->
+    <div class="project-pie-container" id="projectPieContainer">
+        <div class="pie-title">非遗级别分布</div>
+        <div class="pie-chart-wrapper">
+            <div class="pie-chart" id="projectPieChart"></div>
+            <div class="pie-legend" id="projectPieLegend"></div>
+        </div>
+    </div>
+    
+    <!-- 左右布局 -->
+    <div class="project-layout">
+        <div class="project-tabs-wrapper">
+            <div class="project-tabs" id="projectTabs">
+                <!-- 由 JS 动态生成 -->
+            </div>
+        </div>
+        <div class="project-card" id="projectCard">
+            <div class="project-name" id="projectName">莞香制作技艺</div>
+            <div class="project-meta" id="projectRegion">
+                <span class="meta-tag level">🏷️ 国家级非遗</span>
+                <span class="meta-tag batch">📅 第四批（2014年）</span>
+                <span class="meta-tag region">📍 广东省东莞市</span>
+                <span class="meta-tag code">📋 VIII.-224</span>
+            </div>
+            <div class="project-desc" id="projectDesc">岭南沉香核心非遗...</div>
+        </div>
+    </div>
+</div>
+
+        <!-- ===== 非遗二级页面：传承签名 ===== -->
+<div id="page-signature" class="page sub-page heritage-sub-page">
+    <button class="back-btn" data-back="heritage">← 返回</button>
+    <div class="sub-page-title">
+        传承签名
+        <span class="sub">— 留名寄意 · 共续香缘 —</span>
+    </div>
+    <div class="signature-layout">
+        
+        <!-- ★★★ 模式切换标签 ★★★ -->
+        <div class="signature-mode-tabs">
+            <button class="mode-tab active" data-mode="write">✍️ 手写签名</button>
+            <button class="mode-tab" data-mode="type">⌨️ 输入姓名</button>
+        </div>
+        
+        <!-- ★★★ 手写模式 ★★★ -->
+        <div class="signature-mode-content active" id="modeWrite">
+            <div class="signature-canvas-wrapper">
+                <canvas id="signatureCanvas" width="600" height="200"></canvas>
+                <div class="canvas-hint">✍️ 请在画布上写下你的名字</div>
+            </div>
+            <div class="signature-tools">
+                <button class="sig-tool" data-action="clear">🗑️ 清除</button>
+                <button class="sig-tool primary" data-action="submit-sig">📤 提交签名</button>
+            </div>
+        </div>
+        
+        <!-- ★★★ 输入模式 ★★★ -->
+        <div class="signature-mode-content" id="modeType">
+            <div class="signature-input-wrapper">
+                <label for="nameInput" class="input-label">👤 请输入你的姓名</label>
+                <input type="text" id="nameInput" class="signature-name-input" 
+                       placeholder="例如：张三" maxlength="20" />
+                <div class="input-hint">💡 输入姓名后点击下方按钮发送弹幕</div>
+            </div>
+            <div class="signature-tools">
+                <button class="sig-tool primary" id="submitNameBtn">📤 发送姓名弹幕</button>
+            </div>
+        </div>
+        
+        <!-- ★★★ 弹幕输入区（两种模式共用） ★★★ -->
+        <div class="signature-input-row">
+            <input type="text" id="barrageInput" placeholder="输入祝福愿景，按回车发送..." />
+            <button class="sig-tool primary" id="sendBarrageBtn">发送弹幕</button>
+        </div>
+    </div>
+</div>
+
+
+        <!-- 8. 制香操作交互 -->
+        <div id="page-interactive" class="page sub-page" data-page="interactive">
+            <div class="page-content">
+                <div class="back-hint">← 从「制香工序」进入</div>
+                <h1 class="page-title">🧪 制香操作交互</h1>
+                <div class="sub-content interactive-placeholder">
+                    <div class="big-icon">⚗️</div>
+                    <p style="font-size:1.2rem; color:var(--gold);">制香体验 · 交互空间</p>
+                    <p style="max-width:480px; margin:0 auto;">
+                        这里将呈现制香过程的交互式模拟，<br />
+                        用户可参与选料、炮制、配伍等环节。<br />
+                        <span class="text-muted" style="font-size:0.85rem;">（待完善交互逻辑）</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. 非遗二级页面（保留作为备用，但新版卡片已取代其入口） -->
+        <div id="page-heritage1" class="page sub-page" data-page="heritage1">
+            <div class="page-content">
+                <div class="back-hint">← 从「非遗传承」进入</div>
+                <h1 class="page-title">🏮 闽南 · 永春香</h1>
+                <div class="sub-content">
+                    <p>永春香，源自福建永春，以"篾香"著称，是国家级非物质文化遗产。</p>
+                    <p>其制作技艺融合了中原香文化与闽南地方特色，以竹篾为骨，香泥为肉，经沾、搓、浸、晒等工序而成。</p>
+                    <p style="color:var(--gold);">🌿 特色：篾香 · 传统沾香法 · 百年传承</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-heritage2" class="page sub-page" data-page="heritage2">
+            <div class="page-content">
+                <div class="back-hint">← 从「非遗传承」进入</div>
+                <h1 class="page-title">🌿 岭南 · 莞香</h1>
+                <div class="sub-content">
+                    <p>莞香，产于广东东莞，以"女儿香"闻名，是中国传统名香之一。</p>
+                    <p>莞香树（白木香树）结香需经"开香门"等特殊技艺，香韵清雅绵长，自古为宫廷贡品。</p>
+                    <p style="color:var(--gold);">🌿 特色：白木香 · 开香门 · 清雅之韵</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-heritage3" class="page sub-page" data-page="heritage3">
+            <div class="page-content">
+                <div class="back-hint">← 从「非遗传承」进入</div>
+                <h1 class="page-title">📿 江南 · 苏香</h1>
+                <div class="sub-content">
+                    <p>苏香，源自苏州，以"和香"技艺著称，融合了江南文人的审美意趣。</p>
+                    <p>苏香讲究香方配伍与香品造型，以香丸、香饼、香篆等形式呈现，香气幽雅细腻，富有书卷气。</p>
+                    <p style="color:var(--gold);">🌿 特色：和香 · 香篆 · 文人雅趣</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================================
+        【导航组件】香炉 + 菜单
+        ========================================================== -->
+
+        <nav class="nav-menu" id="navMenu" role="navigation" aria-label="主导航">
+            <div class="nav-menu-body">
+                <div class="nav-wave" aria-hidden="true">
+                    <div class="nav-wave" style="background: url('images/yan2.png') center/100% 100% no-repeat;"></div>
+                </div>
+                <div class="nav-list" id="navList">
+                    <button class="nav-item" data-target="home" data-nav="home">
+                        <span class="nav-dot"></span>凝香寻古
+                    </button>
+                    <div class="nav-divider"></div>
+                    <button class="nav-item" data-target="history" data-nav="history">
+                        <span class="nav-dot"></span>历史追溯
+                    </button>
+                    <div class="nav-divider"></div>
+                    <button class="nav-item" data-target="spices" data-nav="spices">
+                        <span class="nav-dot"></span>天然香料
+                    </button>
+                    <div class="nav-divider"></div>
+                    <button class="nav-item" data-target="process" data-nav="process">
+                        <span class="nav-dot"></span>制香工序
+                    </button>
+                    <div class="nav-divider"></div>
+                    <button class="nav-item" data-target="heritage" data-nav="heritage">
+                        <span class="nav-dot"></span>非遗传承
+                    </button>
+                    <div class="nav-divider"></div>
+                    <button class="nav-item" data-target="intro" data-nav="intro">
+                        <span class="nav-dot"></span>引入
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="incense-burner" id="incenseBurner" aria-label="打开/关闭导航">
+            <img src="images/xianglu1.png" class="burner-icon" alt="香炉" style="width:100px; height:100px;">
+        </div>
+
+    </div>
+    <!-- /#app -->
+
+     <!-- ===== 全屏弹幕容器 ===== -->
+        <div class="barrage-container" id="barrageContainer"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
